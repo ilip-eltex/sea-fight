@@ -10,6 +10,11 @@ int main (int arg_q, char **args)
 	// else connect to server than window wait other gamer to connect 
 	
 	// game field config window
-	// window wait
+	// window wait for other gamer
+	
+	// window game
+	
+	// window stat
+	// goto menu
 	return 0;
 }
