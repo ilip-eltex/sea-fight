@@ -1,39 +1,29 @@
-TARGET=typetest
-CC=gcc
-DBG=-g
-LD=-l
+BIN_MAIN := main
+BIN_SERVER := server
+BIN_DEFS := defs
+SOURCES_MAIN := main.c
+SOURCES_SERVER := server.c
+SOURCES_DEFS := defs.c
+CC := gcc
+HEADERS := defs.h server.h
 
-HEADERS += test \
-		network
+.PHONY := all clean help
 
+all: $(BIN_MAIN) $(BIN_SERVER)
 
-all: $(TARGET)
-	
+$(BIN): $(SOURCES)
+		$(CC) $(SOURCES_MAIN) -o -Wall $(BIN_MAIN) -lpthread -lncurses
+		$(CC) $(SOURCES_SERVER) -o -Wall $(BIN_SERVER) -lpthread
+		#./$(BIN_SERVER)
+		#./$(BIN_MAIN)
 
-$(TARGET): main.o types.o 
-	$(CC) $(DBG) build/$< -o $@
+$(BIN): $(HEADERS)
 
-test_network: test_network.o netmanager.o types.o 
-	$(CC) $(DBG) types.h network/netmanager.h build/$< -o $@
+help:
 
-main.o: main.c types.h
-	$(CC) -c $(DBG) $< -o build/$@
+test:
 
-types.o: types.h
-	$(CC) -c $(DBG) $< -o build/$@
-
-test_network.o: test_net.c types.h
-	$(CC) -c $(DBG)  $< -o build/$@
-	
-netmanager.o: network/netmanager.c network/netmanager.h  
-	$(CC) -c $(DBG)  $< -o build/$@
-
-build:
-	mkdir build
 
 clean:
-	rm -rf build/
-	rm $(TARGET)*
-
-ignore:
-	cat "$(TARGET)*" >>.gitignore
+		rm -rf $(BIN_MAIN)
+		rm -rf $(BIN_SERVER)
