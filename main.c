@@ -1,8 +1,22 @@
 // includes
+#include "types.h"
+
 
 int main (int arg_q, char **args)
 {
-	// parsing arguments
+	int a = FAIL;				// Invalid data
+	 a =CONTINUE;			// means that previous action was successfull
+	 a =HALT;				// force stop due to partner's disconnect or another
+	 a =TEST_CONNECT;		// for checking connection
+	 a =TEST_CONNECT_BACK;	// answer for previous			
+	 a =SEND_MAP;  			// next data transfer will be map
+	 a =SHOT;				// client's request for choosen cell
+	 a =HIT;				// shot was successful
+	 a =WET;				// shot wasn't successful
+	 a =WIN;				// you win
+	 a =LOSE; 				// you lose
+
+// parsing arguments
 	
 	// menu window
 	
