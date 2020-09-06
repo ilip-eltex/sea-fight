@@ -3,6 +3,6 @@
 
 #include "graphics.h"
 
-int wndShipconf (char ** map);
+int wndShipconf (char *** map);
 
 #endif
