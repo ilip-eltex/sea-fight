@@ -5,11 +5,11 @@
 
 typedef enum data_val
 {
-	FAIL = -10,				// Invalid data
+	FAIL,				// Invalid data
 	CONTINUE,			// means that previous action was successfull
 	HALT,				// force stop due to partner's disconnect or another
-	TEST_CONNECT,		// for checking connection
-	TEST_CONNECT_BACK,	// answer for previous			
+	TEST_CONNECT,			// for checking connection
+	TEST_CONNECT_BACK,		// answer for previous			
 	SEND_MAP,  			// next data transfer will be map
 	SHOT,				// client's request for choosen cell
 	HIT,				// shot was successful
@@ -28,7 +28,7 @@ typedef struct event
 char client_ip[16], server_ip[16];
 uint16_t client_port, server_port;
 
-uint16_t term_x, term_y;
+uint8_t main_wnd_col, main_wnd_lines;
 
 #endif
 
