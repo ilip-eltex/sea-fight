@@ -1,0 +1,8 @@
+a.out
+main.c
+*.o
+test
+Makefile
+coordinator.c
+coordinator
+graphics
