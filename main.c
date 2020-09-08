@@ -1,34 +1,62 @@
 // includes
 #include "types.h"
+#include <pthread.h>
+
 
 
 int main (int arg_q, char **args)
 {
-	int a = FAIL;				// Invalid data
-	 a =CONTINUE;			// means that previous action was successfull
-	 a =HALT;				// force stop due to partner's disconnect or another
-	 a =TEST_CONNECT;		// for checking connection
-	 a =TEST_CONNECT_BACK;	// answer for previous			
-	 a =SEND_MAP;  			// next data transfer will be map
-	 a =SHOT;				// client's request for choosen cell
-	 a =HIT;				// shot was successful
-	 a =WET;				// shot wasn't successful
-	 a =WIN;				// you win
-	 a =LOSE; 				// you lose
+	// choose action
+	int mode; // 1 for start session; 2 for connect to active one
+	printf ("Welcome to Marine Fight!\nPlease choose action:\n(1) Create game\n(2) Connect to game\n(0) Quit\n\n>> ");
+	scanf ("%d", &mode);
+	if (mode == 0)
+		return 0;
 
-// parsing arguments
+	// enter user ip and port
+	printf ("\n\nPlease enter your IP and port (IP as 255.255.255.255):\n>> ");
+	scanf ("%s %d", client_ip, &client_port);
 	
-	// menu window
+	// if server is choosen then start server thread
+	if (mode == 1)
+	{
+		printf ("\nEnter your IP and server port (IP as 255.255.255.255)\n>> ");
+		char **srv_arg = malloc (sizeof(char*) * 2);
+		srv_arg[0] = malloc (sizeof(char) * 16);
+		srv_arg[1] = malloc (sizeof(char) * 7);
+		memset (srv_arg[0], '\0', 16);
+		memset (srv_arg[1], '\0', 7);
+		scanf ("%s %s", srv_arg[0], srv_arg[1]);
+		pthread_t srv;
+		serv_ready = 0;
+		pthread_create (&srv, NULL, initServer, (void*) srv_arg);
+		printf ("Wait for server... ");
+		int sec=0;
+		while ( !srv_ready )
+		{
+			sleep (1);
+			printf ("\b%d", ++sec);
+			if (sec == 30)
+				return 0; 
+		}
+		// connect to server via socket		
+	}
 	
-	// condition: if server choosen than run it and wait
-	// else connect to server than window wait other gamer to connect 
+	// connect to active game
+	else
+	{
+		printf ("\nEnter server IP and port (IP as 255.255.255.255)\n>> ");
+		scanf ("%s %d", server_ip, &server_port);
+		// connect to server via socket
+	}
 	
-	// game field config window
-	// window wait for other gamer
+	//wait for server command to start ships configure
 	
-	// window game
-	
-	// window stat
-	// goto menu
+	// ships configurate 
+	memset (user_map, '~', 150);
+		
+	// wait for other player
+	// game
+
 	return 0;
 }

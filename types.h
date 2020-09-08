@@ -26,9 +26,14 @@ typedef struct event
 } event_t;
 
 char client_ip[16], server_ip[16];
+
 uint16_t client_port, server_port;
 
-uint8_t main_wnd_col, main_wnd_lines;
+int srv_ready;
+
+//uint8_t main_wnd_col, main_wnd_lines;
+
+char user_map[15][10], partner_map[15][10]; 
 
 #endif
 

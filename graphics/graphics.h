@@ -15,6 +15,7 @@ WINDOW  *main_wnd,      // main 50x35 application window
 
 char wnd_title[16], wnd_status[11];
 
+void update ();
 void wndTitle ();
 void wndStatus ();
 int initWnd (); // checks terminal parameters (not less 70x50), calls initscr()  
