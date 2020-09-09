@@ -10,8 +10,6 @@ typedef enum data_val
 	HALT,				// force stop due to partner's disconnect or another
 	TEST_CONNECT,		// for checking connection
 	TEST_CONNECT_BACK,	// answer for previous			
-	SEND_MAP,  			// next data transfer will be map
-	WIN,				// you win
 	LOSE,				// you lose
 	SHOT = 'x',				// client's request for choosen cell
 	HIT = '*',				// shot was successful
@@ -33,4 +31,4 @@ uint16_t client_port, server_port;
 int srv_ready;
 
 char user_map[15][10], partner_map[15][10]; 
-
+#endif

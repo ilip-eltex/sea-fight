@@ -401,7 +401,7 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
-
+a.out
 # Prerequisites
 *.d
 

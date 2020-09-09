@@ -1,7 +1,42 @@
 // includes
 #include "types.h"
 #include <pthread.h>
-
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+void printBothMap ()
+{
+	enum WICH
+	{
+		USER=0,
+		PARTNER=1
+	};
+	enum WICH wich;
+	int x=0, y=0;
+	printf ("\n      YOU         ");
+	printf ("     ENEMY\n");
+	while ( y < 10 )
+	{
+		switch (wich)
+		{
+			case 0: printf ("%c", user_map[x++][y]); break;
+			case 1: printf ("%c", partner_map[x++][y]);
+		}
+		if ( (x == 15) && (wich == USER) )
+		{
+			x = 0;
+			wich = PARTNER;
+			printf ("   ");
+			
+		} else if ( (x == 15) && (wich == PARTNER) )
+		{
+			x = 0;
+			wich = USER;
+			y++;
+			printf ("\n");
+		}	
+	}
+}
 
 
 int main (int arg_q, char **args)
@@ -28,8 +63,8 @@ int main (int arg_q, char **args)
 		memset (srv_arg[1], '\0', 7);
 		scanf ("%s %s", srv_arg[0], srv_arg[1]);
 		pthread_t srv;
-		serv_ready = 0;
-		pthread_create (&srv, NULL, initServer, (void*) srv_arg);
+		srv_ready = 0;
+		//pthread_create (&srv, NULL, initServer, (void*) srv_arg); 		!! UNCOMMENT IT
 		printf ("Wait for server... ");
 		int sec=0;
 		while ( !srv_ready )
@@ -43,7 +78,7 @@ int main (int arg_q, char **args)
 	}
 	
 	// connect to active game
-	else
+	else if (0) //									!! DELETE CONDITION
 	{
 		printf ("\nEnter server IP and port (IP as 255.255.255.255)\n>> ");
 		scanf ("%s %d", server_ip, &server_port);
@@ -53,8 +88,9 @@ int main (int arg_q, char **args)
 	//wait for server command to start ships configure
 	
 	// ships configurate 
-	memset (user_map, '~', 150);
-		
+	memset (user_map, '~', 150);	
+	memset (partner_map, '~', 150);
+	printBothMap ();
 	// wait for other player
 	// game
 
