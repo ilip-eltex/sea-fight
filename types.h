@@ -16,7 +16,9 @@ typedef enum data_val
 	SHOT = 'x',				// client's request for choosen cell
 	HIT = '*',				// shot was successful
 	WET = '.',				// shot wasn't successful
+	SEA = '~',
 	BOAT = 'B'
+	
 }data_val_t;
 
 typedef struct event
@@ -31,6 +33,9 @@ char client_ip[16], server_ip[16];
 uint16_t client_port, server_port;
 
 int srv_ready;
+int serv_ready;
+int initServer;
 
 char user_map[15][10], partner_map[15][10]; 
 
+#endif
