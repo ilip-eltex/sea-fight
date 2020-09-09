@@ -31,6 +31,7 @@ event_t parseCoords (char *s) // in 'XY' format, where Y is [0..9]; X is [A..O]
 	// Enter parsed data
 	result.x = s[0] - 'A';
 	result.y = s[1] - '0';
+	result.data = CONTINUE;
 	return result;	
 }
 
@@ -142,18 +143,27 @@ int main (int arg_q, char **args)
 	memset (partner_map, '~', 150);
 	const char *msg_buf = malloc (sizeof (char) * 128);
 	char *msg = NULL;
+	enum orientation_t
+        {
+        	HORIZONTAL,
+        	VERTICAL
+        };
+        enum orientation_t orientation=VERTICAL;
+        int senior=1, junior=3, middle=2, x, y;
+	char cmd[12];
+	
+	enum ship_t 
+	{
+		SENIOR,
+		MIDDLE,
+		JUNIOR
+	};
+	enum ship_t current_ship = SENIOR;
+	event_t parsed_coors;
 	while (1)
 	{
 		cls();
-		enum orientation_t 
-		{
-			HORIZONTAL,
-			VERTICAL
-		};
-		enum orientation_t orientation; 
-		int senior=1, junior=3, middle=2, x, y;
 		printUserMap ();
-		char cmd[12];
 		printf ("\nYou are editing your ships map. Type next commands to configurate:\n");
 		printf ("'orientation':      to switch current choosen ship orientation;\n");
 		printf ("'reset':            to clear map and begin again;\n");
@@ -163,16 +173,129 @@ int main (int arg_q, char **args)
 		printf ("'XY':               to place choosen ship into coordinates. X is [A..O], Y is [0..0];\n");
 		if (msg != NULL)
 		{
-			printf ("Error: %s\n", msg);
+			printf ("\nError: %s\n", msg);
 			msg = NULL;
 		}
 		printf ("\n\nInfo:\n");
 		printf ("(S)enior ship - takes 5 cells. Available - %d\n", senior);
 		printf ("(M)iddle ships - takes 3 cells. Available - %d\n", middle);
-		printf ("(J)unior ships - takes 2 cells. Available - %d\n>> ", junior);
+		printf ("(J)unior ships - takes 2 cells. Available - %d\n", junior);
+		printf ("Orientation - %s\n", orientation==HORIZONTAL ? "horizontal" : "vertical");
+		printf ("Current ship - ");
+		switch (current_ship)
+		{
+			case SENIOR: printf ("senior"); break;
+			case MIDDLE: printf ("middle"); break;
+			case JUNIOR: printf ("junior");  
+		}
+		printf ("\n\n>> "); 
 		scanf ("%s", cmd);
 		cmd[11] = '\0';
-			
+		
+		if ( !strcmp (cmd, "exit") )
+			return 0;
+		
+		else if ( !strcmp (cmd, "reset") )
+		{
+			memset (user_map, '~', 150);
+			senior = 1;
+			middle = 2;
+			junior = 3;
+		}
+		
+		else if ( !strcmp (cmd, "continue") )
+		{
+			if ( senior==0 && middle==0 && junior==0 ) 
+				break;
+			else 
+			{
+				strcpy (msg_buf, "You cann't continue untill all ships placed\0");
+				msg = msg_buf;
+			}
+		}
+		
+		else if ( !strcmp (cmd, "orientation") )
+		{
+			if (orientation == HORIZONTAL)
+				orientation = VERTICAL;
+			else
+				orientation = HORIZONTAL;
+		}
+		
+		else if ( cmd[0] == 's' || cmd[0] == 'm' || cmd[0] == 'j')
+		{
+			switch (cmd[0])
+			{
+				case 's': current_ship = SENIOR; break;
+				case 'm': current_ship = MIDDLE; break;
+				case 'j': current_ship = JUNIOR;
+			}
+		} 
+
+		else if ( (parsed_coors = parseCoords (cmd)).data != FAIL ) 
+		{
+			int pole;
+			switch  (orientation)
+			{
+				case HORIZONTAL: pole = parsed_coors.x; break;
+				case VERTICAL: pole = parsed_coors.y;
+			}
+			int ship_len = 0, *current_ship_ptr=NULL;
+			char ship_symbol;
+			switch (current_ship)
+			{
+				case SENIOR: ship_len = 5; ship_symbol = 'S'; current_ship_ptr = &senior; break;
+				case MIDDLE: ship_len = 3; ship_symbol = 'M'; current_ship_ptr = &middle; break;
+				case JUNIOR: ship_len = 2; ship_symbol = 'J'; current_ship_ptr = &junior;
+			}
+			if (*current_ship_ptr == 0) 
+			{
+				strcpy (msg_buf, "All of this ships is already placed. Change the ship type or continue game\0");
+				msg = msg_buf;
+				continue;
+			}
+			int lim = (orientation == HORIZONTAL ? 15: 10);
+			if ( (pole + ship_len) < lim )
+			{
+				int busy=0;
+				for (int i=pole; i < (pole + ship_len); i++)
+					switch (orientation)
+                                        {
+                                                case HORIZONTAL: 
+							if (user_map[i][parsed_coors.y] != '~')
+								busy = 1;
+							break;
+                                                case VERTICAL: 
+							if (user_map[parsed_coors.x][i] != '~')
+								busy = 1;
+                                        }
+				if (busy)
+				{
+					strcpy (msg_buf, "Space already busy\0");
+					msg = msg_buf;
+					continue;
+				}
+				for (int i=pole; i < (pole + ship_len); i++)
+					switch (orientation)
+					{
+						case HORIZONTAL: user_map[i][parsed_coors.y] = ship_symbol; break;
+						case VERTICAL: user_map[parsed_coors.x][i] = ship_symbol;
+					}
+				(*current_ship_ptr)--; 
+				
+			}	
+			else
+			{
+				strcpy (msg_buf, "Choosen ship cann't be placed here due to too long\0");
+				msg = msg_buf;
+			}
+		}
+		
+		else
+		{
+			strcpy (msg_buf, "Invalid syntax\0");
+			msg = msg_buf;
+		}	
 	}
 		
 	// wait for other player
