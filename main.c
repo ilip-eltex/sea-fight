@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <ctype.h>
 
+#define cls() printf("\e[2J\e[H")
+
 event_t parseCoords (char *s) // in 'XY' format, where Y is [0..9]; X is [A..O]
 {
 	event_t result = {-1, -1, FAIL};
@@ -71,7 +73,7 @@ void printBothMap ()
 
 void printUserMap ()
 {
-	printf ("\n            YOU         \n\n");
+	//printf ("\n            YOU         \n\n");
 	printf ("  A B C D E F G H I J K L M N O\n");
 	for (int y=0; y<10; y++)
 	{
@@ -89,6 +91,7 @@ int main (int arg_q, char **args)
 {
 	// choose action
 	int mode; // 1 for start session; 2 for connect to active one
+	cls();
 	printf ("Welcome to Marine Fight!\nPlease choose action:\n(1) Create game\n(2) Connect to game\n(0) Quit\n\n>> ");
 	scanf ("%d", &mode);
 	if (mode == 0)
@@ -97,7 +100,7 @@ int main (int arg_q, char **args)
 	// enter user ip and port
 	printf ("\n\nPlease enter your IP and port (IP as 255.255.255.255):\n>> ");
 	scanf ("%s %d", client_ip, &client_port);
-	
+	cls();
 	// if server is choosen then start server thread
 	if (mode == 1)
 	{
@@ -133,11 +136,45 @@ int main (int arg_q, char **args)
 	
 	//wait for server command to start ships configure
 	
+	cls();
 	// ships configurate 
 	memset (user_map, '~', 150);	
 	memset (partner_map, '~', 150);
-	printf ("%d", atoi("A"));	
-	
+	const char *msg_buf = malloc (sizeof (char) * 128);
+	char *msg = NULL;
+	while (1)
+	{
+		cls();
+		enum orientation_t 
+		{
+			HORIZONTAL,
+			VERTICAL
+		};
+		enum orientation_t orientation; 
+		int senior=1, junior=3, middle=2, x, y;
+		printUserMap ();
+		char cmd[12];
+		printf ("\nYou are editing your ships map. Type next commands to configurate:\n");
+		printf ("'orientation':      to switch current choosen ship orientation;\n");
+		printf ("'reset':            to clear map and begin again;\n");
+		printf ("'continue':         to finish configurate;\n");
+		printf ("'exit':             to quit app;\n");
+		printf ("'s' or 'm' or 'j':  to choose current ship;\n");
+		printf ("'XY':               to place choosen ship into coordinates. X is [A..O], Y is [0..0];\n");
+		if (msg != NULL)
+		{
+			printf ("Error: %s\n", msg);
+			msg = NULL;
+		}
+		printf ("\n\nInfo:\n");
+		printf ("(S)enior ship - takes 5 cells. Available - %d\n", senior);
+		printf ("(M)iddle ships - takes 3 cells. Available - %d\n", middle);
+		printf ("(J)unior ships - takes 2 cells. Available - %d\n>> ", junior);
+		scanf ("%s", cmd);
+		cmd[11] = '\0';
+			
+	}
+		
 	// wait for other player
 	// game
 
