@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+
 void printBothMap ()
 {
 	enum WICH
@@ -36,6 +37,11 @@ void printBothMap ()
 			printf ("\n");
 		}	
 	}
+}
+
+void printUserMap ()
+{
+	
 }
 
 
@@ -90,6 +96,8 @@ int main (int arg_q, char **args)
 	// ships configurate 
 	memset (user_map, '~', 150);	
 	memset (partner_map, '~', 150);
+	partner_map[5][5] = 'X';
+	user_map[10][9] = 'A';
 	printBothMap ();
 	// wait for other player
 	// game
