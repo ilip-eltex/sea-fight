@@ -2,14 +2,23 @@
 
 void wndTitle ()
 {
-	wmove (main_wnd, 4, 18);
-	wprintw (main_wnd, "%s", wnd_title);	
+	move (4, 18);
+	printw ("%s", wnd_title);	
 }
 
 void wndStatus ()
 {
-	wmove (main_wnd, 3, 2);
-	wprintw (main_wnd, "%s", wnd_status);
+	move (3, 2);
+	printw ("%s", wnd_status);
+}
+
+void update ()
+{
+	//wrefresh (main_wnd);
+	wrefresh (user_wnd);
+	wrefresh (partner_wnd);
+	wrefresh (info_wnd);
+	doupdate ();
 }
 
 int initWnd ()
@@ -17,20 +26,28 @@ int initWnd ()
 	if ( !initscr() )
 		return 1;
 	// here checking terminal sizes
-	main_wnd = newwin (35, 50, 1, 1);
+	/*main_wnd = newwin (35, 50, 1, 1);
 	
-	user_wnd = derwin (main_wnd, 10, 15, 6, 6);
-	partner_wnd = derwin (main_wnd, 10, 15, 6, 25);
+	if (main_wnd == NULL)
+		return 2; */
 	
-	info_wnd = derwin (main_wnd, 13, 19, 19, 2);	
+	user_wnd = newwin (10, 15, 6, 6);
+	if (user_wnd == NULL)
+		return 3;
 	
-	wmove (main_wnd, 2, 2);
-	wprintw (main_wnd, "STATUS:");
+	partner_wnd = newwin (10, 15, 6, 25);
+	if (partner_wnd == NULL)
+		return 4;
+	
+	info_wnd = newwin (13, 19, 19, 2);	
+	if (info_wnd == NULL)
+		return 5;	
+
+	move (2, 2);
+	printw ("STATUS:");
 	memset (wnd_title, '\0', 16);
 	memset (wnd_status, '\0', 11);
-	
-	if ( user_wnd == NULL || partner_wnd == NULL || info_wnd == NULL || main_wnd == NULL )
-		return 2;
+	refresh ();		
 	
 	return 0;
 }
@@ -40,6 +57,6 @@ int delWnd ()
 	delwin (info_wnd);
 	delwin (user_wnd);
 	delwin (partner_wnd);
-	delwin (main_wnd);
+	//delwin (main_wnd);
 	endwin ();
 }
