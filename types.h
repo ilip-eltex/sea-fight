@@ -21,7 +21,7 @@ typedef struct event
 {
 	int16_t x;
 	int16_t y;
-	char* data; //data_val_t data;
+	data_val_t data;
 } event_t;
 
 char client_ip[16], server_ip[16];
