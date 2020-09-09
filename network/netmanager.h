@@ -5,8 +5,17 @@
 
 #include "../types.h"
 
-int initSocket(char _ip[16], uint8_t _port);
-int connectToServer(char _ip[16], uint8_t _port);
+
+typedef struct connect
+{
+	uint16_t local_sock_fd;
+	int *remote_sock_fd;
+	struct sockaddr_in local_addr;
+	struct sockaddr_in *remote_addr; // min 2 players;
+}connect_t;
+
+int initSocket(char _ip[16], uint8_t _port, connect_t *con);
+int connectToServer(char _ip[16], uint8_t _port, connect_t *con);
 
 /***
  * @reference:
@@ -27,8 +36,10 @@ int connectToServer(char _ip[16], uint8_t _port);
 	 it is technical event
 
 ***/
-int sendEvent(event_t* e);
-int sendMap(char* map);
-int sendConnectionTest();
+int sendEvent(event_t* e, struct sockaddr_in *remote_addr, uint16_t sock_fd);
+int sendMap(char* map, struct sockaddr_in *remote_addr);
+int sendConnectionTest(struct sockaddr_in *remote_addr);
+int waitConnection(struct sockaddr_in *remote_addr);
+int recvEvent(event_t* e, struct sockaddr_in *remote_addr);
 
 #endif

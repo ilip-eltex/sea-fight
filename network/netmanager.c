@@ -20,18 +20,12 @@ char err[255];
 
 //типо тут все структурки объявить и пользовать
 
-struct sockaddr_in local_addr;
-struct sockaddr_in remote_addr;
-
-uint16_t local_sock_fd;
-uint16_t remote_sock_fd;
-
-int initSocket(char _ip[16], uint8_t _port)
+int initSocket(char _ip[16], uint8_t _port, connect_t *con)
 {
 	int status = 0;
 
-	local_sock_fd = socket(AF_INET, SOCK_STREAM, 0);
-	if(  local_sock_fd < 0 )
+	sock_fd = socket(AF_INET, SOCK_STREAM, 0);
+	if(  sock_fd < 0 )
 	{
 #ifdef DEBUG
 		sprintf(err, "socket init %sFAILED%s!\n", red, color_null);
@@ -46,12 +40,12 @@ int initSocket(char _ip[16], uint8_t _port)
 	}
 #endif
 
-	local_addr.sin_family = AF_INET;
-	local_addr.sin_port = htons(_port);
-	local_addr.sin_addr.s_addr = inet_addr(_ip);
+	con.local_addr.sin_family = AF_INET;
+	con.local_addr.sin_port = htons(_port);
+	con.local_addr.sin_addr.s_addr = inet_addr(_ip);
 
 
-	status = bind(local_sock_fd, (struct sockaddr*)&local_addr, sizeof(local_addr));
+	status = bind(sock_fd, (struct sockaddr*)&con.local_addr, sizeof(con.local_addr));
 	if( status < 0 )
 	{
 #ifdef DEBUG
@@ -70,18 +64,17 @@ int initSocket(char _ip[16], uint8_t _port)
 	return status;	
 }
 
-int connectToServer(char _ip[16], uint8_t _port)
+int connectToServer(char _ip[16], uint8_t _port, connect_t *con)
 {
 	int status = 0;
 
-	remote_addr.sin_family = AF_INET;
-	remote_addr.sin_port = htons(_port);
-	remote_addr.sin_addr.s_addr = inet_addr(_ip);
-
-	status = sendConnectionTest();
+	con.remote_addr.sin_family = AF_INET;
+	con.remote_addr.sin_port = htons(_port);
+	con.remote_addr.sin_addr.s_addr = inet_addr(_ip);
+	status = sendConnectionTest(con.remote_addr);
 	
 	if( status < 0 )
-		memset((char *) &remote_addr, 0, sizeof(remote_addr));
+		memset((char *) &con.remote_addr, 0, sizeof(con.remote_addr));
 		
 
 	return status;	
@@ -105,12 +98,11 @@ int connectToServer(char _ip[16], uint8_t _port)
 	}
 	 it is technical event
 ***/
-int sendEvent(event_t* e)
+int sendEvent(event_t* e, struct sockaddr_in *remote_addr, uint16_t sock_fd)
 {
 	int status = 0;
-/*	
-*/
-	status = sendto(local_sock_fd,(void*)e, sizeof(e), MSG_DONTWAIT,
+
+	status = sendto(sock_fd,(void*)e, sizeof(e), MSG_DONTWAIT,
 					(struct sockaddr*)&remote_addr, 
 					sizeof(remote_addr) );	
 	if(status < 0)
@@ -131,13 +123,12 @@ int sendEvent(event_t* e)
 	return status;
 }
 
-int recvEvent(event_t* e)
+int recvEvent(event_t* e, struct sockaddr_in *remote_addr, uint16_t sock_fd)
 {
 	int status = 0;
 
-	status = recvfrom(local_sock_fd, 
-					  &e, sizeof(e), MSG_WAITALL,
-					  (struct sockaddr*)&remote_addr, sizeof(remote_addr));
+	status = recvfrom(sock_fd, &e, sizeof(e), MSG_WAITALL,
+	 (struct sockaddr*)&remote_addr, sizeof(remote_addr));
 	if(status < 0)
 	{
 #ifdef DEBUG
@@ -156,10 +147,10 @@ int recvEvent(event_t* e)
 	return status;
 }
 
-int sendMap(char* map)
+int sendMap(char* map, struct sockaddr_in *remote_addr, uint16_t sock_fd)
 {
 	int status = 0;
-	status = sendto(local_sock_fd, map, sizeof(map), MSG_DONTWAIT, 	
+	status = sendto(sock_fd, map, sizeof(map), 	
 					(struct sockaddr*)&remote_addr, 
 					sizeof(remote_addr) );	
 	if(status < 0)
@@ -180,15 +171,18 @@ int sendMap(char* map)
 	return status;
 }
 
-int sendConnectionTest()
+int sendConnectionTest(int remote_fd, struct sockaddr_in *remote_addr)
 {
 	int status = 0;
 	event_t test_connection = {
 		 		.x = TEST_CONNECT,
 		 		.y = TEST_CONNECT,
+				.data = (char*) malloc( sizeof(char) )
 		 };
 
-	status = sendEvent(&test_connection);
+		 test_connection.data = TEST_CONNECT;
+
+	status = sendEvent(&test_connection, remote_addr, remote_fd);
 	if(status < 0)
 	{
 #ifdef DEBUG
@@ -203,7 +197,7 @@ int sendConnectionTest()
 		printf(err);
 	}
 #endif
-
+	free(test_connection.data);
 	status = recvEvent(&test_connection);
 	
 	if( test_connection.x != TEST_CONNECT_BACK )
@@ -221,7 +215,37 @@ int sendConnectionTest()
 		printf(err);
 	}
 #endif
-
+	
 	return status;
 }
 
+
+int acceptConnection( int remote_fd, struct sockaddr_in *remote_addr, int local_fd)
+{
+	int status = 0;
+	char buf[255];
+
+		remote_fd = accept(serv_connect->local_sock_fd, 
+			(struct sockaddr_in*)&serv_connect->remote_addr[i], 
+			sizeof( serv_connect->remote_addr[i]));
+	
+		if( remote_fd < 0)
+		{
+#ifdef DEBUG
+			sprintf(err, "accepting clieten %d is %sFAILED%s!\n", i, red, color_null);
+			perror( err );
+#endif
+			return errno;
+		}
+#ifdef DEBUG
+		else {
+			sprintf(err, "accepting clietуn %d is %sSUCCESFULLY%s sent, wait answer...\n", i, green, color_null);
+			printf(err);
+		}
+#endif
+
+
+	
+
+	return status;	
+}
