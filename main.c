@@ -1,7 +1,88 @@
 // includes
 #include "types.h"
 #include <pthread.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <ctype.h>
 
+event_t parseCoords (char *s) // in 'XY' format, where Y is [0..9]; X is [A..O]
+{
+	event_t result = {-1, -1, FAIL};
+	if (s == NULL)
+		return result; 
+
+	// Checking X for validity
+	if ( !isalpha (s[0]) )
+		return result;
+	if ( islower (s[0]) )
+		if ( toupper (s[0]) != s[0] )
+			s[0] = toupper (s[0]);
+		else return result;
+	if ( !( (s[0] >= 'A') && (s[0] <= 'O') ) )
+		return result;
+	
+ 	// Checking Y for validity 		
+	if ( !isdigit (s[1]) )
+		return result;
+	
+	// Enter parsed data
+	result.x = s[0] - 'A';
+	result.y = s[1] - '0';
+	return result;	
+}
+
+void printBothMap ()
+{
+	enum WICH
+	{
+		USER=0,
+		PARTNER=1
+	};
+	enum WICH wich;
+	int x=0, y=0;
+	printf ("\n            YOU         ");
+	printf ("                     ENEMY\n\n");
+	printf ("  A B C D E F G H I J K L M N O      A B C D E F G H I J K L M N O\n0 ");
+	while ( y < 10 )
+	{
+		switch (wich)
+		{
+			case 0: printf ("%c ", user_map[x++][y]); break;
+			case 1: printf ("%c ", partner_map[x++][y]);
+		}
+		if ( (x == 15) && (wich == USER) )
+		{
+			x = 0;
+			wich = PARTNER;
+			printf ("   %d ", y);
+			
+		} else if ( (x == 15) && (wich == PARTNER) )
+		{
+			x = 0;
+			wich = USER;
+			y++;
+			if (y !=10)
+				printf ("\n%d ", y);
+			else printf ("\n\n");
+		}	
+	}
+}
+
+void printUserMap ()
+{
+	printf ("\n            YOU         \n\n");
+	printf ("  A B C D E F G H I J K L M N O\n");
+	for (int y=0; y<10; y++)
+	{
+		printf ("%d ", y);
+		for (int x=0; x<15; x++)
+		{
+			printf ("%c ", user_map[x][y]); 
+		}
+		printf ("\n");	
+	}
+}
 
 
 int main (int arg_q, char **args)
@@ -28,8 +109,8 @@ int main (int arg_q, char **args)
 		memset (srv_arg[1], '\0', 7);
 		scanf ("%s %s", srv_arg[0], srv_arg[1]);
 		pthread_t srv;
-		serv_ready = 0;
-		pthread_create (&srv, NULL, initServer, (void*) srv_arg);
+		srv_ready = 0;
+		//pthread_create (&srv, NULL, initServer, (void*) srv_arg); 		!! UNCOMMENT IT
 		printf ("Wait for server... ");
 		int sec=0;
 		while ( !srv_ready )
@@ -43,7 +124,7 @@ int main (int arg_q, char **args)
 	}
 	
 	// connect to active game
-	else
+	else if (0) //									!! DELETE CONDITION
 	{
 		printf ("\nEnter server IP and port (IP as 255.255.255.255)\n>> ");
 		scanf ("%s %d", server_ip, &server_port);
@@ -53,8 +134,10 @@ int main (int arg_q, char **args)
 	//wait for server command to start ships configure
 	
 	// ships configurate 
-	memset (user_map, '~', 150);
-		
+	memset (user_map, '~', 150);	
+	memset (partner_map, '~', 150);
+	printf ("%d", atoi("A"));	
+	
 	// wait for other player
 	// game
 
