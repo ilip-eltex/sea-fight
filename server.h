@@ -2,6 +2,7 @@
 #define SERVER_H
 
 #include "types.h"
+#include "game.h"
 #include "network/netmanager.h"
 
 typedef struct assoc_event_action
@@ -11,7 +12,8 @@ typedef struct assoc_event_action
 }assoc_event_action_t;
 
 int initServer(char **arg);
-int waitEvent(*e, void (**action)(int x, int y, char *data));
+int waitEvent(*e, 
+void (**action)(int x, int y, char *data));
 
 int onShot(event_t *e );
 char* getMapFromUser( char *userMap, char* sevMap);
