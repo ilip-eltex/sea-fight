@@ -5,15 +5,33 @@
 
 #include "../types.h"
 
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <stdlib.h>
 
 typedef struct connect
 {
-	uint16_t local_sock_fd;
+	int local_sock_fd;
 	int *remote_sock_fd;
 	struct sockaddr_in local_addr;
 	struct sockaddr_in *remote_addr; // min 2 players;
 }connect_t;
 
+///////////\remote_fd/////\msg////////\size/////
+// send(int sockfd, const void *buf, size_t len, int flags);
+//      
+// sendto(int sockfd, const void *buf, size_t len, int flags,
+//                    const struct sockaddr *dest_addr, socklen_t addrlen);
+////////////\local_fd/////
+// listen(int sockfd, int backlog);
+/////////\remote_fd//////\msg////////////
+// recv(int sockfd, void *buf, size_t len, int flags);
+//
+// recvfrom(int sockfd, void *buf, size_t len, int flags,
+//          struct sockaddr *src_addr, socklen_t *addrlen);
+//
 int initSocket(char _ip[16], uint8_t _port, connect_t *con);
 int connectToServer(char _ip[16], uint8_t _port, connect_t *con);
 
@@ -36,10 +54,10 @@ int connectToServer(char _ip[16], uint8_t _port, connect_t *con);
 	 it is technical event
 
 ***/
-int sendEvent(event_t* e, struct sockaddr_in *remote_addr, uint16_t sock_fd);
-int sendMap(char* map, struct sockaddr_in *remote_addr);
-int sendConnectionTest(struct sockaddr_in *remote_addr);
-int waitConnection(struct sockaddr_in *remote_addr);
-int recvEvent(event_t* e, struct sockaddr_in *remote_addr);
+int sendEvent( int remote_fd, event_t* e, struct sockaddr_in* remote_addr);
+int recvEvent(int remote_fd, event_t* e, struct sockaddr_in *remote_addr);
+int sendMap(int remote_fd, char* map, struct sockaddr_in *remote_addr);
+int sendConnectionTest(int remote_fd, struct sockaddr_in *remote_addr);
+int acceptConnection(int local_fd, int remote_fd, struct sockaddr_in *remote_addr);
 
 #endif
