@@ -21,12 +21,15 @@ int calculateShot(user_t *player, uint16_t x, uint16_t y)
             if(player->map[x][y] == BOAT)
             {
                 player->map[x][y] = HIT;
+                player->hp--;
+                return HIT;
             }
             else if(player->map[x][y] == SEA)
             {
                 player->map[x][y] = WET;
+                return WET;
             }
-    
+    return 0;
 }
 
 int chekingAliveBoat(user_t *player)
