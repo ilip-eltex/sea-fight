@@ -133,7 +133,7 @@ int recvEvent(int remote_fd, event_t* e, struct sockaddr_in *remote_addr)
 	}
 #ifdef DEBUG
 	else {
-		sprintf(err, "Event is recived %sSUCCESFULLY%s sent, wait answer...\n", green, color_null);
+		sprintf(err, "Event is recived %sSUCCESFULLY%s\n", green, color_null);
 		printf(err);
 	}
 #endif
@@ -162,6 +162,30 @@ int sendMap(int remote_fd, char* map, struct sockaddr_in *remote_addr)
 	}
 #endif
 
+	return status;
+}
+
+int waitMap(int remote_fd, char** map, struct sockaddr_in *remote_addr)
+{
+	int status = 0;
+
+	status = recvfrom(remote_fd, &map, sizeof(map), MSG_WAITALL,
+	 (struct sockaddr*)&remote_addr, sizeof(remote_addr));
+	if(status < 0)
+	{
+#ifdef DEBUG
+		sprintf(err, "Map is not recived %sFAILED%s!\n", red, color_null);
+		perror( err );
+#endif
+		return errno;
+	}
+#ifdef DEBUG
+	else {
+		sprintf(err, "Map is recived %sSUCCESFULLY%s \n", green, color_null);
+		printf(err);
+	}
+#endif
+	
 	return status;
 }
 

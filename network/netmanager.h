@@ -62,6 +62,7 @@ int connectToServer(char _ip[16], uint8_t _port, connect_t *con);
 int sendEvent( int remote_fd, event_t* e, struct sockaddr_in* remote_addr);
 int recvEvent(int remote_fd, event_t* e, struct sockaddr_in *remote_addr);
 int sendMap(int remote_fd, char* map, struct sockaddr_in *remote_addr);
+int waitMap(int remote_fd, char** map, struct sockaddr_in *remote_addr);
 int sendConnectionTest(int remote_fd, struct sockaddr_in *remote_addr);
 int acceptConnection(int local_fd, int remote_fd, struct sockaddr_in *remote_addr);
 

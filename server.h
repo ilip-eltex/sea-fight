@@ -12,8 +12,7 @@ typedef struct assoc_event_action
 }assoc_event_action_t;
 
 int initServer(char **arg);
-int waitEvent(*e, 
-void (**action)(int x, int y, char *data));
+int waitEvent(event_t *e, connect_t *serv_connect);
 
 int onShot(event_t *e );
 char* getMapFromUser( char *userMap, char* sevMap);
