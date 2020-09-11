@@ -144,7 +144,7 @@ int recvEvent(int remote_fd, event_t* e, struct sockaddr_in *remote_addr)
 int sendMap(int remote_fd, char* map, struct sockaddr_in *remote_addr)
 {
 	int status = 0;
-	status = sendto(remote_fd, map, sizeof(map), 	
+	status = sendto(remote_fd, map, sizeof(map), MSG_DONTWAIT,
 					(struct sockaddr*)&remote_addr, 
 					sizeof(remote_addr) );	
 	if(status < 0)

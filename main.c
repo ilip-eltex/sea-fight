@@ -5,6 +5,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
+#include "server.h"
+#include "network/netmanager.h"
+
 
 #define cls() printf("\e[2J\e[H")
 
@@ -91,8 +94,10 @@ void printUserMap ()
 int main (int arg_q, char **args)
 {
 	// choose action
-	int mode; // 1 for start session; 2 for connect to active one
+	int mode, srv_fd; // 1 for start session; 2 for connect to active one
+	connect_t *connect_info = malloc (sizeof(connect_t));
 	cls();
+	event_t event;
 	printf ("Welcome to Marine Fight!\nPlease choose action:\n(1) Create game\n(2) Connect to game\n(0) Quit\n\n>> ");
 	scanf ("%d", &mode);
 	if (mode == 0)
@@ -101,6 +106,7 @@ int main (int arg_q, char **args)
 	// enter user ip and port
 	printf ("\n\nPlease enter your IP and port (IP as 255.255.255.255):\n>> ");
 	scanf ("%s %d", client_ip, &client_port);
+	initSocket (client_ip, client_port, connect_info);
 	cls();
 	// if server is choosen then start server thread
 	if (mode == 1)
@@ -114,30 +120,46 @@ int main (int arg_q, char **args)
 		scanf ("%s %s", srv_arg[0], srv_arg[1]);
 		pthread_t srv;
 		srv_ready = 0;
-		//pthread_create (&srv, NULL, initServer, (void*) srv_arg); 		!! UNCOMMENT IT
-		printf ("Wait for server... ");
+		char serv_arg[64];
+		memset (serv_arg, '\0', 64);
+		sprintf (serv_arg, "a %s p %s\0", srv_arg[0], srv_arg[1]);  	
+		//pthread_create (&srv, NULL, initServer, (void*) serv_arg); 	
+		printf ("Wait for server...\n ");
 		int sec=0;
 		while ( !srv_ready )
 		{
 			sleep (1);
-			printf ("\b%d", ++sec);
 			if (sec == 30)
 				return 0; 
 		}
-		// connect to server via socket		
+		//connectToServer (srv_arg[0], atoi(srv_arg[1]), connect_info);
+		strcpy (server_ip, srv_arg[0]);
+		server_port = atoi(srv_arg[1]);
+	
 	}
 	
 	// connect to active game
-	else if (0) //									!! DELETE CONDITION
+	else	
 	{
 		printf ("\nEnter server IP and port (IP as 255.255.255.255)\n>> ");
 		scanf ("%s %d", server_ip, &server_port);
-		// connect to server via socket
+		connectToServer (server_ip, server_port, connect_info);
 	}
 	
-	//wait for server command to start ships configure
+	// Test connection
+	recvEvent (connect_info->remote_sock_fd, &event, connect_info->remote_addr);
+	if (event.data == TEST_CONNECT)
+	{
 	
+		event.data = TEST_CONNECT_BACK;
+		sendEvent (connect_info->remote_sock_fd, &event, connect_info->remote_addr);
+	}
+	else return 1;
 	cls();
+	recvEvent (connect_info->remote_sock_fd, &event, connect_info->remote_addr);
+	if ( event.data != WAIT_MAP )
+		return 1;
+	
 	// ships configurate 
 	memset (user_map, '~', 150);	
 	memset (partner_map, '~', 150);
@@ -297,9 +319,11 @@ int main (int arg_q, char **args)
 			msg = msg_buf;
 		}	
 	}
-		
-	// wait for event_t.data==START_GAME
-	
+	sendMap (connect_info->remote_sock_fd, user_map, connect_info->remote_addr);	
+	recvEvent (connect_info->remote_sock_fd, &event, connect_info->remote_addr);
+	if (event.data != START_GAME)
+		return 1;
+
 	// game
 	int move=0; // ability to shot
 	/*enum game_result_t
@@ -310,7 +334,9 @@ int main (int arg_q, char **args)
 		NONE
 	}; */
 	//enum game_result_t game_result = NONE;
-	event_t event = {-1, -1, NONE};
+	event.x = -1;
+	event.y = -1;
+	event.data =  NONE;
 	char shot_info[128];
 	memset (shot_info, '\0', 128);
 	while (1)
@@ -335,12 +361,12 @@ int main (int arg_q, char **args)
 		if (!move)
 		{
 			printf ("Wait for server to move...");
-			event = recvEvent ();
+			recvEvent (connect_info->remote_sock_fd, &event, connect_info->remote_addr);
 			switch (event.data) 
 			{
 				case CONTINUE:
 					move = 1;
-					break
+					break;
 				
 				case HALT:
 					//game_result = FORCE_STOP;
@@ -367,18 +393,19 @@ int main (int arg_q, char **args)
 					user_map[event.x][event.y] = 'X';
 				
 				default:
-					// send fail
+					return 1;
 					
 			}
 				
 		}
 		printf ("Your move\n>> ");
-		char cmd[11] = '\0';
+		char cmd[11];
+		memset (cmd, '\0', 11);
 		if ( !strcmp (cmd, "exit") )
 		{
 			break;
 		}
-		else if ( (event = parseCoords (cmd).data != FAIL) )
+		else if ( (event = parseCoords (cmd)).data != FAIL) 
 		{
 			if (partner_map[event.x][event.y] != '~')
 			{
@@ -387,7 +414,7 @@ int main (int arg_q, char **args)
 				continue;
 			}
 			event.data = SHOT;
-			//send event
+			sendEvent (connect_info->remote_sock_fd, &event, connect_info->remote_addr);
 			move = 0;
 			event.data = NONE;
 		}

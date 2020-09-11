@@ -15,6 +15,7 @@ typedef enum data_val
 /* -3 */LOSE,				// you lose
 /* -2 */WAIT_MAP,
 /* -1 */START_GAME,
+	ACCEPT_CONNECT = 15,
 /* NULL do not use */
 	SHOT = 'x',				// client's request for choosen cell. Also sends for player as enemy's move
 	HIT = '*',				// shot was successful
@@ -37,7 +38,7 @@ uint16_t client_port, server_port;
 
 int srv_ready;
 int serv_ready;
-int initServer;
+//int initServer;
 
 char user_map[15][10], partner_map[15][10]; 
 

@@ -13,14 +13,14 @@ typedef struct assoc_event_action
 
 int initServer(char **arg);
 int waitEvent(event_t *e, connect_t *serv_connect);
-
+/*
 int onShot(event_t *e );
 char* getMapFromUser( char *userMap, char* sevMap);
 int calculateShot(event_t *e);
 int doAction( event_t *e );
 int addAction( event_t *e, void (*action)());
 int removAction( event_t *e, int num);
-
+*/
 
 #endif
  
