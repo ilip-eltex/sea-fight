@@ -64,32 +64,35 @@ int waitEvent(event_t *e, connect_t* serv_connect)
 				if( users_count <= 1 )
                 {
 				    status = acceptConnection(serv_connect->local_sock_fd
-											 , &serv_connect->remote_sock_fd
-                                             , &serv_connect->remote_addr
+											 , &serv_connect->remote_sock_fd[users_count]
+                                             , &serv_connect->remote_addr[users_count]
 											 );
-				    status = sendConnectionTest(serv_connect->remote_sock_fd, serv_connect->remote_addr);
                     
                     event = TEST_CONNECT;
                     users_count++; 
 				}
                 else{
-                    
-                }
-				
+					event = START_GAME;    
+                }				
 			break;
 			case TEST_CONNECT:
-				e.x = TEST_CONNECT;
-				action[0](NULL, NULL, NULL);
-				sendEvent( e );
+				if( users_count <= 1 )
+				{
+				    status = sendConnectionTest(serv_connect->remote_sock_fd[users_count]
+											   , serv_connect->remote_addr[users_count]
+											   );
+					event = ACCEPT_CONNECT;
+				}
+				else{
+					event = START_GAME;
+				}
 			break;
 			case FAIL:
 				
 			case CONTINUE: 			// means that previous action was successfull
 			case HALT:				// force stop due to partner's disconnect or another
 			case SEND_MAP:  	
-				for(i=0; i < 2; i++){
-					getMapFromUser( player[1], map);
-				}
+			
 			break;		
 			case SHOT:				// client's request for choosen cell
 			case HIT:				// shot was successful
