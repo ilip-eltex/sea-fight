@@ -16,12 +16,12 @@ typedef enum data_val
 /* -2 */WAIT_MAP,
 /* -1 */START_GAME,
 /* NULL do not use */
-	SHOT = 'x',				// client's request for choosen cell
+	SHOT = 'x',				// client's request for choosen cell. Also sends for player as enemy's move
 	HIT = '*',				// shot was successful
 	WET = '.',				// shot wasn't successful
 	SEA = '~',
-	BOAT = 'B'
-	
+	BOAT = 'B',
+	NONE
 }data_val_t;
 
 typedef struct event

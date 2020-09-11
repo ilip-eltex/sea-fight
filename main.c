@@ -298,8 +298,116 @@ int main (int arg_q, char **args)
 		}	
 	}
 		
-	// wait for other player
+	// wait for event_t.data==START_GAME
+	
 	// game
+	int move=0; // ability to shot
+	/*enum game_result_t
+	{
+		WIN,
+		LOST,
+		FORCE_STOP,
+		NONE
+	}; */
+	//enum game_result_t game_result = NONE;
+	event_t event = {-1, -1, NONE};
+	char shot_info[128];
+	memset (shot_info, '\0', 128);
+	while (1)
+	{
+		cls();
+		if (event.data != NONE)
+			break;
+		printBothMap ();
+		printf ("Available commands:\n");
+		printf ("'exit': to quit the game;\n");
+		printf ("'XY':   shot in coordinats.  X is [A..O], Y is [0..0].\n");
+		if (msg != NULL)
+		{
+			printf ("\nError: %s\n");
+			msg = NULL;
+		}
+		if (shot_info[0] != '\0')
+		{
+			printf ("Previous move: %s\n", shot_info);
+		}
+		printf ("Status: ");
+		if (!move)
+		{
+			printf ("Wait for server to move...");
+			event = recvEvent ();
+			switch (event.data) 
+			{
+				case CONTINUE:
+					move = 1;
+					break
+				
+				case HALT:
+					//game_result = FORCE_STOP;
+					continue;
+
+				case WIN:
+					//game_result = WIN;
+					continue;
+				
+				case LOSE:
+					continue;
+				
+				case HIT:
+					partner_map[event.x][event.y] = '*';
+					strcpy (shot_info, "YOUR SHOT SUCCESSFUL\0");
+					continue;
+
+				case WET:
+					partner_map[event.x][event.y] = '.';
+					strcpy (shot_info, "YOUR SHOT UNSUCCESSFUL\0");
+					continue;
+				
+				case SHOT:
+					user_map[event.x][event.y] = 'X';
+				
+				default:
+					// send fail
+					
+			}
+				
+		}
+		printf ("Your move\n>> ");
+		char cmd[11] = '\0';
+		if ( !strcmp (cmd, "exit") )
+		{
+			break;
+		}
+		else if ( (event = parseCoords (cmd).data != FAIL) )
+		{
+			if (partner_map[event.x][event.y] != '~')
+			{
+				strcpy (msg_buf, "You cann't shot here - this cell isn't empty");
+				msg = msg_buf;
+				continue;
+			}
+			event.data = SHOT;
+			//send event
+			move = 0;
+			event.data = NONE;
+		}
+		else
+		{
+			strcpy (msg_buf, "Invalid syntax");
+			msg = msg_buf;
+		}		
+		
+	}
+	
+	cls();
+	
+	switch (event.data)
+	{
+		case WIN: printf ("YOU WIN!\n"); break;
+		case LOSE: printf ("YOU LOST :(\n"); break;
+		
+		default: printf ("Game session aborted by server\n");
+	}
 
 	return 0;
 }

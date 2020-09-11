@@ -31,3 +31,7 @@ clean:
 		rm -rf $(BIN_MAIN)
 		rm -rf $(BIN_SERVER)
 		rm -rf $(BIN_GAME)
+
+client:
+	gcc main.c -g -lpthread
+
