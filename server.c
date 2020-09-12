@@ -75,6 +75,7 @@ int waitEvent(event_t *e, connect_t* serv_connect)
 		switch( event )
 		{
 			case ACCEPT_CONNECT:
+				srv_ready = 1;
 				if( users_count <= 1 )
                 {
 				    status = acceptConnection(serv_connect->local_sock_fd
