@@ -215,7 +215,11 @@ int main (int arg_q, char **args)
 		cmd[11] = '\0';
 		
 		if ( !strcmp (cmd, "exit") )
+		{
+			event.data = HALT;
+			sendEvent (connect_info->remote_sock_fd, &event, connect_info->remote_addr);
 			return 0;
+		}
 		
 		else if ( !strcmp (cmd, "reset") )
 		{
@@ -403,6 +407,8 @@ int main (int arg_q, char **args)
 		memset (cmd, '\0', 11);
 		if ( !strcmp (cmd, "exit") )
 		{
+			event.data = HALT;
+			sendEvent (connect_info->remote_sock_fd, &event, connect_info->remote_addr);
 			break;
 		}
 		else if ( (event = parseCoords (cmd)).data != FAIL) 
