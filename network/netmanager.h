@@ -37,8 +37,8 @@ typedef struct connect
 // recvfrom(int sockfd, void *buf, size_t len, int flags,
 //          struct sockaddr *src_addr, socklen_t *addrlen);
 //
-int initSocket(char _ip[16], uint8_t _port, connect_t *con);
-int connectToServer(char _ip[16], uint8_t _port, connect_t *con);
+int initSocket(char _ip[16], uint16_t _port, connect_t *con);
+int connectToServer(char _ip[16], uint16_t _port, connect_t *con);
 
 /***
  * @reference:

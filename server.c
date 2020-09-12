@@ -5,7 +5,7 @@
 
 #include <stdarg.h>
 
-int initServer(char **arg)
+int initServer(char *arg)
 {
 	int status = 0;
 
@@ -40,6 +40,22 @@ int initServer(char **arg)
 	event_t *game_event = (event_t*) malloc( sizeof(event_t) );
 	
 	status = waitEvent( game_event, on_serv);
+	
+	close( on_serv->local_sock_fd );
+	if( ! on_serv->local_addr )
+		free(on_serv->local_addr);
+	
+	for( int i = 0; i < 1; i++)
+	{
+		close(on_serv->remote_sock_fd[i]);
+
+		if( on_serv->remote_addr[i] )
+		{
+			free(on_serv->remote_addr[i]);
+		}
+	}
+	if( ! on_serv )
+		free(on_serv);
 
 	return status;	
 }
