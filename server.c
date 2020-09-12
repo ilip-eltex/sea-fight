@@ -3,32 +3,32 @@
 #include "types.h"
 #include "network/netmanager.h"
 
-#include <stdarg.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 int initServer(char *arg)
 {
 	int status = 0;
 
 	int num_args = 2;
-	va_list ap;
 	char *ip;
 	uint16_t port;
-	va_start(ap, *arg);
-	while( *arg ){
-		switch( *arg ){
+	while ((opt = getopt(arg, num_args, "a:p:")) != -1) {
+		switch (opt) 
+		{
 			case 'a':
-				ip = va_arg(arg, char*);
-			break;
-			case 'p':
-				port = va_arg(arg, int);
-			break;
-			default:
-				perror("initServer()::bad parameter");
-			break;
+				ip = (char*) malloc( sizeof(char)*strlen(optarg) );
+                strcpy( ip, optarg);
+                break;
+            case 'p':
+				port = atoi(optarg);
+                break;
+			default: /* '?' */
+               fprintf(stderr, "Usage: %s [-a 127.0.0.1] [-p 333] \n", argv[0]);
+               exit(EXIT_FAILURE);
 		}
-	}
-	va_end(ap);
-	
+    }	
 	connect_t *on_serv = ( connect_t *) malloc( sizeof( connect_t ) );
 	memset( on_serv, 0, sizeof(connect_t));
 	status = initSocket( ip, port, on_serv);
@@ -69,7 +69,7 @@ int waitEvent(event_t *e, connect_t* serv_connect)
 	uint16_t event = ACCEPT_CONNECT;
 	uint16_t users_count = 0;
     user_t *players = (user_t*) malloc( sizeof(user_t) * 2);
-    user_t *token = players[0];
+    user_t *token = palyers[0];
 	while( event != NULL )
     {
 	
@@ -83,7 +83,7 @@ int waitEvent(event_t *e, connect_t* serv_connect)
 											 , &serv_connect->remote_sock_fd[users_count]
                                              , &serv_connect->remote_addr[users_count]
 											 );
-					players[users_count].fd = serv_connect->remote_sock_fd[users_count];
+					players[users_count]->fd = serv_connect->remote_sock_fd[users_count];
                     event = TEST_CONNECT;
                     users_count++; 
 				}
@@ -143,9 +143,6 @@ int waitEvent(event_t *e, connect_t* serv_connect)
 					event = e->data;
 				}
 			break;
-			case FAIL:
-				
-			case HALT:				// force stop due to partner's disconnect or another
 			
 			break;		
 			case SHOT:				// client's request for choosen cell
@@ -191,7 +188,10 @@ int waitEvent(event_t *e, connect_t* serv_connect)
 									, serv_connect->remote_addr[users_count]);
 
 			break;
+			case FAIL:
+			case HALT:				// force stop due to partner's disconnect or another
 			default:
+				
 			break;
         }
             
