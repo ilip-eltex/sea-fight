@@ -122,8 +122,8 @@ int main (int arg_q, char **args)
 		srv_ready = 0;
 		char serv_arg[64];
 		memset (serv_arg, '\0', 64);
-		sprintf (serv_arg, "a %s p %s\0", srv_arg[0], srv_arg[1]);  	
-		//pthread_create (&srv, NULL, initServer, (void*) serv_arg); 	
+	//	sprintf (serv_arg, "initServ -a %s -p %s\0", srv_arg[0], srv_arg[1]);  	
+		pthread_create (&srv, NULL, initServer, (void**) srv_arg); 	
 		printf ("Wait for server...\n ");
 		int sec=0;
 		while ( !srv_ready )
@@ -154,11 +154,16 @@ int main (int arg_q, char **args)
 		event.data = TEST_CONNECT_BACK;
 		sendEvent (connect_info->remote_sock_fd, &event, connect_info->remote_addr);
 	}
-	else return 1;
+	else {
+		perror("test_connect:: ");
+		return 1;
+	}
 	cls();
 	recvEvent (connect_info->remote_sock_fd, &event, connect_info->remote_addr);
-	if ( event.data != WAIT_MAP )
-		return 1;
+	if ( event.data != WAIT_MAP ){
+		perror("wait_map:: ");
+		return 2;
+	}
 	
 	// ships configurate 
 	memset (user_map, '~', 150);	
@@ -323,10 +328,12 @@ int main (int arg_q, char **args)
 			msg = msg_buf;
 		}	
 	}
-	sendMap (connect_info->remote_sock_fd, user_map, connect_info->remote_addr);	
+	sendMap (connect_info->remote_sock_fd,(char**) user_map, connect_info->remote_addr);	
 	recvEvent (connect_info->remote_sock_fd, &event, connect_info->remote_addr);
-	if (event.data != START_GAME)
-		return 1;
+	if (event.data != START_GAME){
+		perror("start_game:: ");
+		return 3;
+	}
 
 	// game
 	int move=0; // ability to shot
@@ -397,7 +404,8 @@ int main (int arg_q, char **args)
 					user_map[event.x][event.y] = 'X';
 				
 				default:
-					return 1;
+					perror("game_process:: ");
+					return 4;
 					
 			}
 				

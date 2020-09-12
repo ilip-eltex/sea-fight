@@ -33,5 +33,5 @@ clean:
 		rm -rf $(BIN_GAME)
 
 client:
-	gcc main.c network/netmanager.c server.c game.c  -g -lpthread
+	gcc -D DEBUG main.c network/netmanager.c server.c game.c  -g -lpthread
 

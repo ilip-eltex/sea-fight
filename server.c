@@ -7,15 +7,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-int initServer(char *arg)
+int initServer(char **arg)
 {
 	int status = 0;
 
 	int num_args = 2;
-	char *ip;
-	uint16_t port;
+	char *ip = arg[0];
+	
+	uint16_t port = atoi( arg[1]);/*
 	int opt;
-	while ((opt = getopt(num_args, &arg, "a:p:")) != -1) {
+	while ((opt = getopt(num_args, arg, ":a:p:")) != -1) {
 		switch (opt) 
 		{
 			case 'a':
@@ -25,11 +26,11 @@ int initServer(char *arg)
             case 'p':
 				port = atoi(optarg);
                 break;
-			default: /* '?' */
+			default:  '?'// 
                fprintf(stderr, "Usage: initServer [-a 127.0.0.1] [-p 333] \n" );
                exit(EXIT_FAILURE);
 		}
-    }	
+    }	*/
 	connect_t *on_serv = ( connect_t *) malloc( sizeof( connect_t ) );
 	memset( on_serv, 0, sizeof(connect_t));
 	status = initSocket( ip, port, on_serv);
@@ -87,7 +88,7 @@ int waitEvent(event_t *e, connect_t* serv_connect)
                     users_count++; 
 				}
                 else{
-					event = START_GAME;    
+					event = WAIT_MAP;    
                 }				
 			break;
 			case TEST_CONNECT:

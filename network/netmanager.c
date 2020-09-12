@@ -20,14 +20,14 @@ int initSocket(char _ip[16], uint16_t _port, connect_t *con)
 	if(  con->local_sock_fd < 0 )
 	{
 #ifdef DEBUG
-		sprintf(err, "socket init %sFAILED%s!\n", red, color_null);
+		sprintf(err, "socket init FAILED!\n");
 		perror( err );
 #endif
 		return errno;
 	}
 #ifdef DEBUG
 	else {
-		sprintf(err, "socket init %sSUCCES%s\n", green, color_null);
+		sprintf(err, "socket init SUCCES\n");
 		printf(err);
 	}
 #endif
@@ -210,7 +210,7 @@ int sendConnectionTest(int remote_fd, struct sockaddr_in *remote_addr)
 	}
 #ifdef DEBUG
 	else {
-		sprintf(err, "connection test is %sSUCCES%s sent, wait answer...\n", green, color_null);
+		sprintf(err, "connection test is SUCCES sent, wait answer...\n");
 		printf(err);
 	}
 #endif
@@ -221,14 +221,14 @@ int sendConnectionTest(int remote_fd, struct sockaddr_in *remote_addr)
 	{
 #ifdef DEBUG
 		sprintf(err, "connection test answer \
-					  is not modified %sFAILED%s!\n", red, color_null);
+					  is not modified FAILED!\n");
 		perror( err );
 #endif
 		return errno;
 	}
 #ifdef DEBUG
 	else {
-		sprintf(err, "connection test is %sSUCCES%s sent, wait answer...\n", green, color_null);
+		sprintf(err, "connection test is SUCCES sent, wait answer...\n");
 		printf(err);
 	}
 #endif
@@ -249,14 +249,14 @@ int acceptConnection(int local_fd, int remote_fd, struct sockaddr_in *remote_add
 		if( remote_fd < 0)
 		{
 #ifdef DEBUG
-			sprintf(err, "accepting clieten %d is %sFAILED%s!\n", i, red, color_null);
+			sprintf(err, "accepting clieten is %sFAILED%s!\n", red, color_null);
 			perror( err );
 #endif
 			return errno;
 		}
 #ifdef DEBUG
 		else {
-			sprintf(err, "accepting clietуn %d is %sSUCCESFULLY%s sent, wait answer...\n", i, green, color_null);
+			sprintf(err, "accepting clietуn is %sSUCCESFULLY%s sent, wait answer...\n", green, color_null);
 			printf(err);
 		}
 #endif

@@ -11,7 +11,7 @@ typedef struct assoc_event_action
 	void (**action)();
 }assoc_event_action_t;
 
-int initServer(char *arg);
+int initServer(char **arg);
 int waitEvent(event_t *e, connect_t *serv_connect);
 /*
 int onShot(event_t *e );
