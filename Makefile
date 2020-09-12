@@ -31,3 +31,7 @@ clean:
 		rm -rf $(BIN_MAIN)
 		rm -rf $(BIN_SERVER)
 		rm -rf $(BIN_GAME)
+
+client:
+	gcc main.c network/netmanager.c server.c game.c  -g -lpthread
+

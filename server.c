@@ -69,7 +69,7 @@ int waitEvent(event_t *e, connect_t* serv_connect)
 	uint16_t event = ACCEPT_CONNECT;
 	uint16_t users_count = 0;
     user_t *players = (user_t*) malloc( sizeof(user_t) * 2);
-    user_t *token = palyers[0];
+    user_t *token = players[0];
 	while( event != NULL )
     {
 	
@@ -83,7 +83,7 @@ int waitEvent(event_t *e, connect_t* serv_connect)
 											 , &serv_connect->remote_sock_fd[users_count]
                                              , &serv_connect->remote_addr[users_count]
 											 );
-					players[users_count]->fd = serv_connect->remote_sock_fd[users_count];
+					players[users_count].fd = serv_connect->remote_sock_fd[users_count];
                     event = TEST_CONNECT;
                     users_count++; 
 				}

@@ -1,5 +1,5 @@
-#ifndef SEA-FIGHT_GAME_H
-#define SEA-FIGHT_GAME_H
+#ifndef SEA_FIGHT_GAME_H
+#define SEA_FIGHT_GAME_H
 
 #include "types.h"
 
@@ -9,6 +9,6 @@ uint8_t hp; //кол-во лодок на поле
 char map[15][10];
 }user_t;
 
-int claculateShipPoints(user_t *player);
-int calculatShot(user_t *player, uint16_t x, uint16_t y);
+int calculateShipPoints(user_t *player);
+int calculateShot(user_t *player, uint16_t x, uint16_t y);
 #endif
