@@ -12,7 +12,7 @@ char err[255];
 
 //типо тут все структурки объявить и пользовать
 
-int initSocket(char _ip[16], uint8_t _port, connect_t *con)
+int initSocket(char _ip[16], uint16_t _port, connect_t *con)
 {
 	int status = 0;
 
@@ -56,7 +56,7 @@ int initSocket(char _ip[16], uint8_t _port, connect_t *con)
 	return status;	
 }
 
-int connectToServer(char _ip[16], uint8_t _port, connect_t *con)
+int connectToServer(char _ip[16], uint16_t _port, connect_t *con)
 {
 	int status = 0;
     

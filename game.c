@@ -1,6 +1,6 @@
 #include "game.h"
 
-int calculateShipPoints(user_t *player, uint16_t x, uint16_t y)
+int calculateShipPoints(user_t *player)
 {
     for(uint16_t x =0; x <= 15; x++)
     {
