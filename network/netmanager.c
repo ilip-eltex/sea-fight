@@ -15,8 +15,9 @@ char err[255];
 int initSocket(char _ip[16], uint16_t _port, connect_t *con)
 {
 	int status = 0;
-	sock_type_t sock_t = con->local_sock_fd;
+	data_val_t sock_t = con->local_sock_fd;
 	con->local_sock_fd = socket(AF_INET, SOCK_STREAM, 0);
+	printf ("initSocket(): start with (%s:%d)\n", _ip, _port);
 	if(  con->local_sock_fd < 0 )
 	{
 #ifdef DEBUG
@@ -31,11 +32,14 @@ int initSocket(char _ip[16], uint16_t _port, connect_t *con)
 		printf(err);
 	}
 #endif
-
+	if (sock_t == SHOT)
+		printf ("initSocket(): Working as client\n");
+	if (sock_t == SERVER)
+	{
 	con->local_addr.sin_family = AF_INET;
 	con->local_addr.sin_port = htons(_port);
 	con->local_addr.sin_addr.s_addr = inet_addr(_ip);
-
+	}
 	if( sock_t == SERVER){
 			status = bind(con->local_sock_fd, (struct sockaddr*)&con->local_addr, sizeof(con->local_addr));
 		if( status < 0 )
@@ -69,13 +73,12 @@ int connectToServer(char _ip[16], uint16_t _port, connect_t *con)
 	(con->remote_addr)->sin_family = AF_INET;
 	(con->remote_addr)->sin_port = htons(_port);
 	(con->remote_addr)->sin_addr.s_addr = inet_addr(_ip);
-	status = connect( con->local_sock_fd, 
+	status = connect (con->local_sock_fd, 
         (struct sockaddr_in*)con->remote_addr, sizeof(*(con->remote_addr)));
 	
-	if( status < 0 ){
-		perror( "connectToServer:: FAILED ");
-		memset((char *) con->remote_addr, 0, sizeof(con->remote_addr));
-	}
+	if( status < 0 )
+		perror("connectToServer()"); //memset((char *) &con->remote_addr, 0, sizeof(con->remote_addr));
+		
 
 	return status;	
 }
@@ -199,8 +202,8 @@ int sendConnectionTest(int remote_fd, struct sockaddr_in *remote_addr)
 {
 	int status = 0;
 	event_t test_connection = {
-		 		.x = TEST_CONNECT,
-		 		.y = TEST_CONNECT,
+		 		.x = -1,
+		 		.y = -1,
 				.data = TEST_CONNECT
 		 };
 
@@ -243,12 +246,12 @@ int sendConnectionTest(int remote_fd, struct sockaddr_in *remote_addr)
 }
 
 
-int acceptConnection(int local_fd, int remote_fd, struct sockaddr_in *remote_addr)
+int acceptConnection(int local_fd, int *remote_fd, struct sockaddr_in *remote_addr)
 {
 	int status = 0;
 	char buf[255];
 
-		remote_fd = accept(local_fd, 
+		*remote_fd = accept(local_fd, 
 			(struct sockaddr_in*)&remote_addr, 
 			sizeof(remote_addr));
 	
