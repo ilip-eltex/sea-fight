@@ -33,6 +33,7 @@ int initServer(char **arg)
     }	*/
 	connect_t *on_serv = ( connect_t *) malloc( sizeof( connect_t ) );
 	memset( on_serv, 0, sizeof(connect_t));
+	on_serv->local_sock_fd = SERVER;
 	status = initSocket( ip, port, on_serv);
 	listen( on_serv->local_sock_fd, 2);
 	

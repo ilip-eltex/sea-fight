@@ -15,7 +15,7 @@ char err[255];
 int initSocket(char _ip[16], uint16_t _port, connect_t *con)
 {
 	int status = 0;
-
+	sock_type_t sock_t = con->local_sock_fd;
 	con->local_sock_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if(  con->local_sock_fd < 0 )
 	{
@@ -36,30 +36,36 @@ int initSocket(char _ip[16], uint16_t _port, connect_t *con)
 	con->local_addr.sin_port = htons(_port);
 	con->local_addr.sin_addr.s_addr = inet_addr(_ip);
 
-
-	status = bind(con->local_sock_fd, (struct sockaddr*)&con->local_addr, sizeof(con->local_addr));
-	if( status < 0 )
-	{
-#ifdef DEBUG
-		sprintf(err, "bind socket is %sFAILED%s!\n", red, color_null);
-		perror( err );
-#endif
-		return errno;	
+	if( sock_t == SERVER){
+			status = bind(con->local_sock_fd, (struct sockaddr*)&con->local_addr, sizeof(con->local_addr));
+		if( status < 0 )
+		{
+	#ifdef DEBUG
+			sprintf(err, "bind socket is FAILED!\n");
+			perror( err );
+	#endif
+			return errno;	
+		}
+	#ifdef DEBUG
+		else {
+			sprintf(err, "socket bind is SUCCES\n");
+			printf(err);
+		}
+	#endif
 	}
-#ifdef DEBUG
-	else {
-		sprintf(err, "socket bind is %sSUCCES%s\n", green, color_null);
-		printf(err);
-	}
-#endif
-
 	return status;	
 }
 
 int connectToServer(char _ip[16], uint16_t _port, connect_t *con)
 {
 	int status = 0;
+
+	if( con->remote_sock_fd == NULL)
+		con->remote_sock_fd = (int*) malloc( sizeof(int));
     
+	if( con->remote_addr == NULL)
+		con->remote_addr = (struct sockaddr_in*) malloc( sizeof( struct sockaddr_in));
+		
     con->remote_addr = ( struct sockaddr_in*) malloc(sizeof(struct sockaddr_in)); 
 	(con->remote_addr)->sin_family = AF_INET;
 	(con->remote_addr)->sin_port = htons(_port);
@@ -256,7 +262,7 @@ int acceptConnection(int local_fd, int remote_fd, struct sockaddr_in *remote_add
 		}
 #ifdef DEBUG
 		else {
-			sprintf(err, "accepting clietуn is %sSUCCESFULLY%s sent, wait answer...\n");
+			sprintf(err, "accepting clietуn is SUCCESFULLY sent, wait answer...\n");
 			printf(err);
 		}
 #endif

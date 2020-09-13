@@ -15,6 +15,12 @@
 #include <stdio.h>
 #include <string.h>
 
+typedef enum sock_type
+{
+	SERVER = 0X666,
+	CLIENT
+}sock_type_t;
+
 
 typedef struct connect
 {

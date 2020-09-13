@@ -106,6 +106,7 @@ int main (int arg_q, char **args)
 	// enter user ip and port
 	printf ("\n\nPlease enter your IP and port (IP as 255.255.255.255):\n>> ");
 	scanf ("%s %d", client_ip, &client_port);
+	connect_info->local_sock_fd = CLIENT;
 	initSocket (client_ip, client_port, connect_info);
 	cls();
 	// if server is choosen then start server thread
@@ -130,9 +131,10 @@ int main (int arg_q, char **args)
 		{
 			sleep (1);
 			if (sec == 30)
-				return 0; 
+				return 0;
+			sec++;
 		}
-		//connectToServer (srv_arg[0], atoi(srv_arg[1]), connect_info);
+		connectToServer (srv_arg[0], atoi(srv_arg[1]), connect_info);
 		strcpy (server_ip, srv_arg[0]);
 		server_port = atoi(srv_arg[1]);
 	
