@@ -77,7 +77,7 @@ int connectToServer(char _ip[16], uint16_t _port, connect_t *con)
         (struct sockaddr_in*)con->remote_addr, sizeof(*(con->remote_addr)));
 	
 	if( status < 0 )
-		perror("connectToServer()"); //memset((char *) &con->remote_addr, 0, sizeof(con->remote_addr));
+		perror("connectToServer():: FAILED"); //memset((char *) &con->remote_addr, 0, sizeof(con->remote_addr));
 		
 
 	return status;	
@@ -160,7 +160,7 @@ int sendMap(int remote_fd, char* map, struct sockaddr_in *remote_addr)
 	{
 #ifdef DEBUG
 		//sprintf(err, "send map is %sFAILED%s!\n", red, color_null);
-		perror( "sendMap failed\n" );
+		perror( "sendMap failed " );
 #endif
 		return errno;
 	}
@@ -184,7 +184,7 @@ int waitMap(int remote_fd, char** map, struct sockaddr_in *remote_addr)
 	{
 #ifdef DEBUG
 		//sprintf(err, "Map is not recived %sFAILED%s!\n", red, color_null);
-		perror( "Map isn't recived\n" );
+		perror( "Map isn't recived " );
 #endif
 		return errno;
 	}
@@ -213,7 +213,7 @@ int sendConnectionTest(int remote_fd, struct sockaddr_in *remote_addr)
 	{
 #ifdef DEBUG
 		//sprintf(err, "connection test is %sFAILED%s!\n", red, color_null);
-		perror( "sendConnectionTest failed\n" );
+		perror( "sendConnectionTest failed" );
 #endif
 		return errno;
 	}
@@ -231,7 +231,7 @@ int sendConnectionTest(int remote_fd, struct sockaddr_in *remote_addr)
 #ifdef DEBUG
 		//sprintf(err, "connection test answer \
 					  is not modified FAILED!\n");
-		perror( "sendConnectionTest answer (TEST_CONNECT_BACK) is worth\n");
+		perror( "sendConnectionTest answer (TEST_CONNECT_BACK) is worth");
 #endif
 		return errno;
 	}
@@ -258,7 +258,7 @@ int acceptConnection(int local_fd, int *remote_fd, struct sockaddr_in *remote_ad
 		if( remote_fd < 0)
 		{
 #ifdef DEBUG
-			sprintf(err, "accepting clieten is FAILED!\n");
+			sprintf(err, "accepting clieten is FAILED!");
 			perror( err );
 #endif
 			return errno;

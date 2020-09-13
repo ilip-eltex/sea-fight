@@ -67,26 +67,25 @@ int waitEvent(event_t *e, connect_t* serv_connect)
 	char err[255];
 	int i = 0;
 	
-	uint16_t event = ACCEPT_CONNECT;
+	int16_t event = ACCEPT_CONNECT;
 	uint16_t users_count = 0;
     user_t *players = (user_t*) malloc( sizeof(user_t) * 2);
 	while( event != NULL )
     {
 	
 		int i = 0;
-		switch( event )
+		switch( (int16_t)event )
 		{
 			case ACCEPT_CONNECT:
 				srv_ready = 1;
 				if( users_count <= 1 )
                 {
 				    status = acceptConnection(serv_connect->local_sock_fd
-											 , &serv_connect->remote_sock_fd[users_count]
+											 , serv_connect->remote_sock_fd[users_count]
                                              , &serv_connect->remote_addr[users_count]
 											 );
 					players[users_count].fd = serv_connect->remote_sock_fd[users_count];
-                    event = TEST_CONNECT;
-                    users_count++; 
+                    event = (int16_t)TEST_CONNECT;
 				}
                 else{
 					event = WAIT_MAP;    
@@ -97,11 +96,12 @@ int waitEvent(event_t *e, connect_t* serv_connect)
 				{
 				    status = sendConnectionTest(serv_connect->remote_sock_fd[users_count]
 											   , &serv_connect->remote_addr[users_count]);
-					event = ACCEPT_CONNECT;
+					event =(int16_t)ACCEPT_CONNECT;
+                    users_count++; 
 				}
 				else{
-					event = WAIT_MAP;
-					e->data = event;
+					event =(int16_t)WAIT_MAP;
+					e->data =(int16_t)event;
 				}
 			break;
 			case SEND_MAP:  	
@@ -117,11 +117,11 @@ int waitEvent(event_t *e, connect_t* serv_connect)
 									, &serv_connect->remote_addr[users_count]);
 					calculateShipPoints( &players[users_count] );
 					users_count--;
-					event = WAIT_MAP;
+					event =(int16_t)WAIT_MAP;
 				}
 				else{
-					event = START_GAME;
-					e->data = START_GAME;
+					event = (int16_t)START_GAME;
+					e->data = (int16_t)START_GAME;
 					users_count = 0;
 				}
 			break;
@@ -133,8 +133,8 @@ int waitEvent(event_t *e, connect_t* serv_connect)
 				if( users_count >= 0 && users_count <= 1 )
 				{
 					if( players[users_count].hp == 0 ){
-						event = LOSE;
-						e->data = event;
+						event = (int16_t)LOSE;
+						e->data = (int16_t)event;
 						break;
 					}
 
@@ -142,7 +142,7 @@ int waitEvent(event_t *e, connect_t* serv_connect)
 									  , e
 									  , &serv_connect->remote_addr[users_count]);
 					
-					event = e->data;
+					event = (int16_t)e->data;
 				}
 			break;
 			
@@ -150,8 +150,8 @@ int waitEvent(event_t *e, connect_t* serv_connect)
 			case SHOT:				// client's request for choosen cell
 				if( users_count >= 0 && users_count <= 1 )
 				{
-					event = calculateShot( &players[users_count], e->x, e->y);
-					e->data = event;
+					event = (int16_t)calculateShot( &players[users_count], e->x, e->y);
+					e->data = (int16_t)event;
 				}
 			break;
 			case WET:				// shot wasn't successful
@@ -169,7 +169,7 @@ int waitEvent(event_t *e, connect_t* serv_connect)
 				status = sendEvent( serv_connect->remote_sock_fd[1]
 									, e
 									, &serv_connect->remote_addr[1]);
-				event = CONTINUE;				
+				event = (int16_t)CONTINUE;				
 			break;
 			case LOSE:				// you lose
 				status = sendEvent( serv_connect->remote_sock_fd[users_count]
@@ -184,7 +184,7 @@ int waitEvent(event_t *e, connect_t* serv_connect)
 				}
 				
 			case WIN:				// you win
-				e->data = WIN;
+				e->data = (int16_t)WIN;
 				status = sendEvent( serv_connect->remote_sock_fd[users_count]
 									, e
 									, &serv_connect->remote_addr[users_count]);
