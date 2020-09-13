@@ -5,7 +5,7 @@
 
 typedef enum data_val
 {
-/* -10 */	FAIL = -10,				// Invalid data
+/* -10 */	FAIL, // = -10,				// Invalid data
 /* -9 */CONTINUE,			// means that previous action was successfull
 /* -8 */HALT,				// force stop due to partner's disconnect or another
 /* -7 */TEST_CONNECT,		// for checking connection
@@ -15,13 +15,13 @@ typedef enum data_val
 /* -3 */LOSE,				// you lose
 /* -2 */WAIT_MAP,
 /* -1 */START_GAME,
-	ACCEPT_CONNECT = 15,
+	ACCEPT_CONNECT, //= 15,
 /* NULL do not use */
-	SHOT = 'x',				// client's request for choosen cell. Also sends for player as enemy's move
-	HIT = '*',				// shot was successful
-	WET = '.',				// shot wasn't successful
-	SEA = '~',
-	BOAT = 'B',
+	SHOT, //= 'x',				// client's request for choosen cell. Also sends for player as enemy's move
+	HIT, //= '*',				// shot was successful
+	WET, //= '.',				// shot wasn't successful
+	SEA, //= '~',
+	BOAT, //= 'B',
 	NONE
 }data_val_t;
 

@@ -17,7 +17,7 @@
 
 typedef enum sock_type
 {
-	SERVER = 0X666,
+	SERVER,
 	CLIENT
 }sock_type_t;
 
@@ -70,6 +70,6 @@ int recvEvent(int remote_fd, event_t* e, struct sockaddr_in *remote_addr);
 int sendMap(int remote_fd, char* map, struct sockaddr_in *remote_addr);
 int waitMap(int remote_fd, char** map, struct sockaddr_in *remote_addr);
 int sendConnectionTest(int remote_fd, struct sockaddr_in *remote_addr);
-int acceptConnection(int local_fd, int remote_fd, struct sockaddr_in *remote_addr);
+int acceptConnection(int local_fd, int *remote_fd, struct sockaddr_in *remote_addr);
 
 #endif

@@ -9,7 +9,7 @@
 #include "network/netmanager.h"
 
 
-#define cls() printf("\e[2J\e[H")
+#define cls() printf("\n\n\n");//"\e[2J\e[H")
 
 event_t parseCoords (char *s) // in 'XY' format, where Y is [0..9]; X is [A..O]
 {
@@ -106,7 +106,7 @@ int main (int arg_q, char **args)
 	// enter user ip and port
 	printf ("\n\nPlease enter your IP and port (IP as 255.255.255.255):\n>> ");
 	scanf ("%s %d", client_ip, &client_port);
-	connect_info->local_sock_fd = CLIENT;
+	connect_info->local_sock_fd = SHOT;
 	initSocket (client_ip, client_port, connect_info);
 	cls();
 	// if server is choosen then start server thread
@@ -134,9 +134,12 @@ int main (int arg_q, char **args)
 				return 0;
 			sec++;
 		}
-		connectToServer (srv_arg[0], atoi(srv_arg[1]), connect_info);
+		int connect_status = connectToServer (srv_arg[0], atoi(srv_arg[1]), connect_info);
 		strcpy (server_ip, srv_arg[0]);
 		server_port = atoi(srv_arg[1]);
+		printf ("Connect status: %d\n", connect_status);
+		getchar();
+		getchar();
 	
 	}
 	
