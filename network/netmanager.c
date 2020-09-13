@@ -102,15 +102,15 @@ int sendEvent( int remote_fd, event_t* e, struct sockaddr_in *remote_addr)
 	if(status < 0)
 	{
 #ifdef DEBUG
-		sprintf(err, "send event is %sFAILED%s!\n", red, color_null);
-		perror( err );
+		//sprintf(err, "send event is %sFAILED%s!\n", red, color_null);
+		perror( "sendEvent failed\n" );
 #endif
 		return errno;
 	}
 #ifdef DEBUG
 	else {
-		sprintf(err, "send event is %sSUCCESFULLY%s sent, wait answer...\n", green, color_null);
-		printf(err);
+		//sprintf(err, "send event is %sSUCCESFULLY%s sent, wait answer...\n", green, color_null);
+		printf("Event sent, wait answer..\n");
 	}
 #endif
 
@@ -126,15 +126,15 @@ int recvEvent(int remote_fd, event_t* e, struct sockaddr_in *remote_addr)
 	if(status < 0)
 	{
 #ifdef DEBUG
-		sprintf(err, "Event is not recived %sFAILED%s!\n", red, color_null);
-		perror( err );
+		//sprintf(err, "Event is not recived %sFAILED%s!\n", red, color_null);
+		perror( "Event isn't recived\n");
 #endif
 		return errno;
 	}
 #ifdef DEBUG
 	else {
-		sprintf(err, "Event is recived %sSUCCESFULLY%s\n", green, color_null);
-		printf(err);
+		//sprintf(err, "Event is recived %sSUCCESFULLY%s\n", green, color_null);
+		printf("Event recived\n");
 	}
 #endif
 	
@@ -150,15 +150,15 @@ int sendMap(int remote_fd, char* map, struct sockaddr_in *remote_addr)
 	if(status < 0)
 	{
 #ifdef DEBUG
-		sprintf(err, "send map is %sFAILED%s!\n", red, color_null);
-		perror( err );
+		//sprintf(err, "send map is %sFAILED%s!\n", red, color_null);
+		perror( "sendMap failed\n" );
 #endif
 		return errno;
 	}
 #ifdef DEBUG
 	else {
-		sprintf(err, "send map is %sSUCCESFULLY%s sent, wait answer...\n", green, color_null);
-		printf(err);
+		//sprintf(err, "send map is %sSUCCESFULLY%s sent, wait answer...\n", green, color_null);
+		printf("Map send, wait answer...\n");
 	}
 #endif
 
@@ -174,15 +174,15 @@ int waitMap(int remote_fd, char** map, struct sockaddr_in *remote_addr)
 	if(status < 0)
 	{
 #ifdef DEBUG
-		sprintf(err, "Map is not recived %sFAILED%s!\n", red, color_null);
-		perror( err );
+		//sprintf(err, "Map is not recived %sFAILED%s!\n", red, color_null);
+		perror( "Map isn't recived\n" );
 #endif
 		return errno;
 	}
 #ifdef DEBUG
 	else {
-		sprintf(err, "Map is recived %sSUCCESFULLY%s \n", green, color_null);
-		printf(err);
+		//sprintf(err, "Map is recived %sSUCCESFULLY%s \n", green, color_null);
+		printf ("Map recived\n");
 	}
 #endif
 	
@@ -203,15 +203,15 @@ int sendConnectionTest(int remote_fd, struct sockaddr_in *remote_addr)
 	if(status < 0)
 	{
 #ifdef DEBUG
-		sprintf(err, "connection test is %sFAILED%s!\n", red, color_null);
-		perror( err );
+		//sprintf(err, "connection test is %sFAILED%s!\n", red, color_null);
+		perror( "sendConnectionTest failed\n" );
 #endif
 		return errno;
 	}
 #ifdef DEBUG
 	else {
-		sprintf(err, "connection test is SUCCES sent, wait answer...\n");
-		printf(err);
+		//sprintf(err, "connection test is SUCCES sent, wait answer...\n");
+		printf("sendConnectionTest done\n");
 	}
 #endif
 
@@ -220,9 +220,9 @@ int sendConnectionTest(int remote_fd, struct sockaddr_in *remote_addr)
 	if( test_connection.x != TEST_CONNECT_BACK )
 	{
 #ifdef DEBUG
-		sprintf(err, "connection test answer \
+		//sprintf(err, "connection test answer \
 					  is not modified FAILED!\n");
-		perror( err );
+		perror( "sendConnectionTest answer (TEST_CONNECT_BACK) is worth\n");
 #endif
 		return errno;
 	}
@@ -249,14 +249,14 @@ int acceptConnection(int local_fd, int remote_fd, struct sockaddr_in *remote_add
 		if( remote_fd < 0)
 		{
 #ifdef DEBUG
-			sprintf(err, "accepting clieten is %sFAILED%s!\n", red, color_null);
+			sprintf(err, "accepting clieten is FAILED!\n");
 			perror( err );
 #endif
 			return errno;
 		}
 #ifdef DEBUG
 		else {
-			sprintf(err, "accepting clietуn is %sSUCCESFULLY%s sent, wait answer...\n", green, color_null);
+			sprintf(err, "accepting clietуn is %sSUCCESFULLY%s sent, wait answer...\n");
 			printf(err);
 		}
 #endif
