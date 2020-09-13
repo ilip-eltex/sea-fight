@@ -66,16 +66,16 @@ int connectToServer(char _ip[16], uint16_t _port, connect_t *con)
 	if( con->remote_addr == NULL)
 		con->remote_addr = (struct sockaddr_in*) malloc( sizeof( struct sockaddr_in));
 		
-    con->remote_addr = ( struct sockaddr_in*) malloc(sizeof(struct sockaddr_in)); 
 	(con->remote_addr)->sin_family = AF_INET;
 	(con->remote_addr)->sin_port = htons(_port);
 	(con->remote_addr)->sin_addr.s_addr = inet_addr(_ip);
 	status = connect( con->local_sock_fd, 
-        (struct sockaddr_in*)&con->remote_addr, sizeof(*(con->remote_addr)));
+        (struct sockaddr_in*)con->remote_addr, sizeof(*(con->remote_addr)));
 	
-	if( status < 0 )
-		memset((char *) &con->remote_addr, 0, sizeof(con->remote_addr));
-		
+	if( status < 0 ){
+		perror( "connectToServer:: FAILED ");
+		memset((char *) con->remote_addr, 0, sizeof(con->remote_addr));
+	}
 
 	return status;	
 }

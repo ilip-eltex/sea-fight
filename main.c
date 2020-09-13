@@ -149,20 +149,20 @@ int main (int arg_q, char **args)
 	}
 	
 	// Test connection
-	recvEvent (connect_info->remote_sock_fd, &event, connect_info->remote_addr);
-	if (event.data == TEST_CONNECT)
+	recvEvent (*connect_info->remote_sock_fd, &event, connect_info->remote_addr);
+	if (event.data == (int16_t)TEST_CONNECT)
 	{
 	
-		event.data = TEST_CONNECT_BACK;
-		sendEvent (connect_info->remote_sock_fd, &event, connect_info->remote_addr);
+		event.data = (int16_t)TEST_CONNECT_BACK;
+		sendEvent (*connect_info->remote_sock_fd, &event, connect_info->remote_addr);
 	}
 	else {
 		perror("test_connect:: ");
 		return 1;
 	}
 	cls();
-	recvEvent (connect_info->remote_sock_fd, &event, connect_info->remote_addr);
-	if ( event.data != WAIT_MAP ){
+	recvEvent (*(connect_info->remote_sock_fd), &event, connect_info->remote_addr);
+	if ( event.data != (int16_t)WAIT_MAP ){
 		perror("wait_map:: ");
 		return 2;
 	}
