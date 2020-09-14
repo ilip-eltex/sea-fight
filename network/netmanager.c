@@ -36,9 +36,10 @@ int initSocket(char _ip[16], uint16_t _port, connect_t *con)
 		printf ("initSocket(): Working as client\n");
 	if (sock_t == SERVER)
 	{
-	con->local_addr.sin_family = AF_INET;
-	con->local_addr.sin_port = htons(_port);
-	con->local_addr.sin_addr.s_addr = inet_addr(_ip);
+		printf("initSocket():: server_local_addr");
+		con->local_addr.sin_family = AF_INET;
+		con->local_addr.sin_port = htons(_port);
+		con->local_addr.sin_addr.s_addr = inet_addr(_ip);
 	}
 	if( sock_t == SERVER){
 			status = bind(con->local_sock_fd, (struct sockaddr*)&con->local_addr, sizeof(con->local_addr));
@@ -47,6 +48,7 @@ int initSocket(char _ip[16], uint16_t _port, connect_t *con)
 	#ifdef DEBUG
 			sprintf(err, "bind socket is FAILED!\n");
 			perror( err );
+			
 	#endif
 			return errno;	
 		}
@@ -204,7 +206,7 @@ int sendConnectionTest(int remote_fd, struct sockaddr_in *remote_addr)
 	event_t test_connection = {
 		 		.x = -1,
 		 		.y = -1,
-				.data = TEST_CONNECT
+				.data =(int16_t) TEST_CONNECT
 		 };
 
 
@@ -226,7 +228,7 @@ int sendConnectionTest(int remote_fd, struct sockaddr_in *remote_addr)
 
 	status = recvEvent(remote_fd, &test_connection, remote_addr);
 	
-	if( test_connection.x != TEST_CONNECT_BACK )
+	if( test_connection.data != (int16_t)TEST_CONNECT_BACK )
 	{
 #ifdef DEBUG
 		//sprintf(err, "connection test answer \
@@ -252,10 +254,10 @@ int acceptConnection(int local_fd, int *remote_fd, struct sockaddr_in *remote_ad
 	char buf[255];
 
 		*remote_fd = accept(local_fd, 
-			(struct sockaddr_in*)&remote_addr, 
+			(struct sockaddr*)&remote_addr, 
 			sizeof(remote_addr));
 	
-		if( remote_fd < 0)
+		if( *remote_fd < 0)
 		{
 #ifdef DEBUG
 			sprintf(err, "accepting clieten is FAILED!");

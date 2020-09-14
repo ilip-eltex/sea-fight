@@ -70,7 +70,7 @@ int waitEvent(event_t *e, connect_t* serv_connect)
 	int16_t event = ACCEPT_CONNECT;
 	uint16_t users_count = 0;
     user_t *players = (user_t*) malloc( sizeof(user_t) * 2);
-	while( event != NULL )
+	while( (int16_t)event != NULL )
     {
 	
 		int i = 0;
@@ -81,7 +81,7 @@ int waitEvent(event_t *e, connect_t* serv_connect)
 				if( users_count <= 1 )
                 {
 				    status = acceptConnection(serv_connect->local_sock_fd
-											 , serv_connect->remote_sock_fd[users_count]
+											 , &serv_connect->remote_sock_fd[users_count]
                                              , &serv_connect->remote_addr[users_count]
 											 );
 					players[users_count].fd = serv_connect->remote_sock_fd[users_count];
